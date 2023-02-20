@@ -3,7 +3,6 @@ import example_tubes
 from collections import Counter
 
 
-
 class TubeSorter:
 
     def __init__(self, matrix):
@@ -11,7 +10,7 @@ class TubeSorter:
         self.width = len(matrix)
         self.tubes = self.start_removeZero(m = matrix)        # Will alter
         self.balls = self.ball_unique()
-        self.movelog = {}
+        self.movelog = []
         self.tops = self.tubes_tops()
 
     def start_removeZero(self, m):
@@ -59,18 +58,32 @@ class TubeSorter:
         tops = []
         for i in range(self.width):
             if self.tube_num(self.tubes[i]) > 0:
-                b = list(Counter(self.tubes[i]).keys())[-1]
-                n = list(Counter(self.tubes[i]).values())[-1]
-                tops.append([b,n])   
+                ball = list(Counter(self.tubes[i]).keys())[-1]
+                num = list(Counter(self.tubes[i]).values())[-1]
+                avl = self.heigth - self.tube_num(self.tubes[i])
+                tops.append([ball,num,avl])   
             else:
-                tops.append([0,4]) # Empty Row
+                tops.append([0,4,4]) # Empty Row
         return tops        
 
-    def move_top(self, t1,t2):
-        n1 = self.tube_num(self.tubes[t1])
-        n2 = self.tube_num(self.tubes[t2])
-        b = t1[n1-1]
-        ## NEED to finish
+    def move_top(self, t1, t2):
+            # check top balls match or is empty in t2
+        if self.tops[t1][0] != self.tops[t2][0] and self.tops[t2][0] != 0:
+            return False
+            # check num of ball t1 fits in t2
+        elif self.tops[t1][1] > self.tops[t2][2]:
+            return False
+            # remove balls from t1, add to t2, log move, update tops
+        else:
+            b1 = self.tops[t1][0]
+            n1 = self.tops[t1][1]
+            self.tubes[t1] = [z for z in self.tubes[t1] if z != b1]
+            for n in range(n1):
+                self.tubes[t2].append(b1)
+            self.movelog.append([t1,t2])
+            self.tops = self.tubes_tops()
+            return True
+
       
     def solve_check(self):           # Check solvable still or solved
         if any(elem[0] == 0 for elem in self.tubes): #has empty tube
@@ -106,6 +119,8 @@ plz.width
 plz = TubeSorter(matrix = example_tubes.tubes_4x6_easy)
 plz.tubes
 plz.tops
+plz.move_top(0,4)
+plz.movelog
 
 plz.tubes_tally()
 
