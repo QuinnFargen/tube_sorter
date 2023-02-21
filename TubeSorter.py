@@ -1,6 +1,7 @@
 
-import example_tubes
+import Ex_tubes
 from collections import Counter
+import time
 
 
 class TubeSorter:
@@ -19,11 +20,17 @@ class TubeSorter:
                 m[i] = [z for z in m[i] if z != 0]
         return m
 
-    def tube_check(self, t):    # Check if tube good
-        return all(elem == t[0] for elem in t)
+    def tube_check(self, tn):    # Check if tube good, all match or empty
+        if self.tubes[tn] == []:
+            return True
+        else:
+            return all(elem == self.tubes[tn][0] for elem in self.tubes[tn])
     
     def tubes_check(self):      # Check all tubes
-        return all(self.tube_check(elem) for elem in self.tubes)
+        for t in range(self.width):
+            if not self.tube_check(tn = t):     # if one tube fails, False
+                return False
+        return True
     
     def tube_num(self, t):      # Return # balls
         return sum(map(lambda x : x != 0, t))
@@ -67,13 +74,22 @@ class TubeSorter:
         return tops        
 
     def move_top(self, t1, t2):
-            # check top balls match or is empty in t2
-        if self.tops[t1][0] != self.tops[t2][0] and self.tops[t2][0] != 0:
-            return False
-            # check num of ball t1 fits in t2
+            # 1 check oposite move wasn't just performed
+            # Shouldn't be able to move back though with check of them not matching #2
+            # ADD LATER: more extensive check on multi recent that there isn't an endless loop of backtracking
+        if self.movelog != []:  # Don't check on first move
+            if self.movelog[-1] == [t2,t1]:
+                # return False
+                print("Opp Move Canceled")
+            # 2 check top balls match or is empty in t2
+        elif self.tops[t1][0] != self.tops[t2][0] and self.tops[t2][0] != 0:
+                # return False
+                print("Top Balls don't match")
+            # 3 check num of ball t1 fits in t2
         elif self.tops[t1][1] > self.tops[t2][2]:
-            return False
-            # remove balls from t1, add to t2, log move, update tops
+                # return False
+                print("Num Ball Dont Fit")
+            # 4 remove balls from t1, add to t2, log move, update tops
         else:
             b1 = self.tops[t1][0]
             n1 = self.tops[t1][1]
@@ -84,16 +100,54 @@ class TubeSorter:
             self.tops = self.tubes_tops()
             return True
 
-      
     def solve_check(self):           # Check solvable still or solved
-        if any(elem[0] == 0 for elem in self.tubes): #has empty tube
-            return True
-        elif all(self.tube_check(elem) for elem in self.tubes): #solved
+        # if any(len(elem) == 0 for elem in self.tubes): #has empty tube
+        #     return True
+        if self.tubes_check():
+            # all(self.tube_check(t = elem) for elem in self.tubes): #solved
             return True
         return False
 
     def Sorter(self):
-        while not self.solve_check(self.tubes):
+        i = 0
+        while not self.solve_check() and len(self.movelog) < 50 and i < 2000:
+            for f in range(self.width):
+                for s in range(self.width):
+                    print([f,s])
+                    time.sleep(1)
+                    self.move_top(t1 = f, t2 = s)
+                    print(self.tops)
+                    i += 1
+                    # print(self.movelog)
+                
+
+
+Ex_tubes.t_4x6_1234
+Ex_tubes.t_4x6_easy
+Ex_tubes.t_4x6_solved
+
+
+plz = TubeSorter(matrix = Ex_tubes.t_4x6_easy)
+plz.tubes
+plz.tops
+plz.move_top(0,4)
+plz.move_top(2,4)
+plz.move_top(3,4)
+plz.movelog
+plz.movelog[-1]
+
+plz.solve_check()
+plz.tube_check(t=0)
+plz.Sorter()
+
+plz.tubes_tally()
+
+
+
+
+
+
+
                 # Random
                 #   Combo of patterns and rando, with logic to not retrace to inf loop
                 # Patterns
@@ -102,25 +156,3 @@ class TubeSorter:
                 #   Middle:
                 #       3 in a row, 1 on top off, 4th is available, move top 1 off, complete
                 #       Tube partial but all one color and finishing color available
-            pass
-        #     solved = tubes        
-        # return solved
-
-
-plz = TubeSorter(matrix = example_tubes.tubes_4x6_solved)
-plz.tubes
-plz.tops
-plz.balls
-plz.heigth
-plz.width
-
-
-
-plz = TubeSorter(matrix = example_tubes.tubes_4x6_easy)
-plz.tubes
-plz.tops
-plz.move_top(0,4)
-plz.movelog
-
-plz.tubes_tally()
-
