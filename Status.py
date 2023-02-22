@@ -7,6 +7,7 @@ class TubeStatus:
         self.heigth = len(matrix[0])
         self.width = len(matrix)
         self.tubes = self.start_removeZero(m = matrix)        # Will alter
+        self.start = self.start_removeZero(m = list(matrix))  # Wont alter
         self.balls = self.ball_unique()
         self.movelog = []
         self.tops = self.tubes_tops()
@@ -87,6 +88,40 @@ class TubeStatus:
             else:
                 tops.append([0,4,4]) # Empty Row
         return tops        
+
+
+    def move_top(self, t1, t2):
+            # 1 check oposite move wasn't just performed
+            # Shouldn't be able to move back though with check of them not matching #2
+            # ADD LATER: more extensive check on multi recent that there isn't an endless loop of backtracking
+        lastMove = []
+        if self.movelog != []: 
+            lastMove = self.movelog[-1] 
+
+        if lastMove == [t2,t1]:  # Don't check on first move
+            # print("Opp Move Canceled")
+            return False
+            # 2 check top balls match and is empty in t2
+        elif self.tops[t1][0] != self.tops[t2][0] and self.tops[t2][0] != 0:
+        # elif self.tops[t1][0] != self.tops[t2][0] or (self.tops[t1] == [] and self.tops[t2] == []):
+            # print("Top Balls don't match")
+            return False
+            # 3 check num of ball t1 fits in t2 or moving empty
+        elif self.tops[t1][1] > self.tops[t2][2] or self.tops[t1][0] == 0:
+            # print("Num Ball Dont Fit")
+            return False
+            # 4 remove balls from t1, add to t2, log move, update tops & cols
+        else:
+            b1 = self.tops[t1][0]
+            n1 = self.tops[t1][1]
+            self.tubes[t1] = self.tubes[t1][: len(self.tubes[t1]) - n1]
+            for n in range(n1):
+                self.tubes[t2].append(b1)
+            self.movelog.append([t1,t2])
+            self.tops = self.tubes_tops()
+            self.cols = self.tubes_avail()
+            return True
+
 
     # def solve_check(self):           # Check solvable still or solved
     #     """
