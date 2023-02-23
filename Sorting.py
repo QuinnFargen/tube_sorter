@@ -41,6 +41,7 @@ class TubeSorter(TubeStatus):
         while not self.tubes_check() and self.reset <= self.resetMAX:
             self.sort_brute()
         print(self.tubes)
+        print(self.movelog)
                 
 
 
@@ -49,25 +50,25 @@ class TubeSorter(TubeStatus):
 
 
 
-Ex_tubes.t_4x6_1234
-Ex_tubes.t_4x6_easy
-Ex_tubes.t_4x6_solved
-Ex_tubes.t_4x14_hard
+# Ex_tubes.t_4x6_1234
+# Ex_tubes.t_4x6_easy
+# Ex_tubes.t_4x6_solved
+# Ex_tubes.t_4x14_hard
 
 
-game = TubeSorter(matrix = Ex_tubes.t_4x6_easy)
-game = TubeSorter(matrix = Ex_tubes.t_4x14_hard)
-game.tubes
-game.start
-game.tops
-game.cols
-game.movelog
+# game = TubeSorter(matrix = Ex_tubes.t_4x6_easy)
+# game = TubeSorter(matrix = Ex_tubes.t_4x14_hard)
+# game.tubes
+# game.start
+# game.tops
+# game.cols
+# game.movelog
 
-game.Sorter()
+# game.Sorter()
 
-game.move_top(t1=0,t2=13)
-game.reset_tubes()
-game.reset
+# game.move_top(t1=0,t2=13)
+# game.reset_tubes()
+# game.reset
 
 
 
