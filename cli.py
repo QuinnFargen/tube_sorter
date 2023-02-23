@@ -1,5 +1,7 @@
 
 
+from Sorting import TubeSorter
+
 print("""
     ----------------------------------
     Welcome to The Ball Sorter
@@ -13,14 +15,18 @@ print("""
 width = int(input("How many tubes: "))
 height = int(input("How many balls per tube: "))
 
-matrix = []
+tubes = []
 for i in range(width):
     t = str(input("Enter Tube: ")).split(",")
     if t[0] == 'BLANK':
-        matrix.append([])
-        print(matrix)
+        tubes.append([])
         continue
-    matrix.append(t)
-    print(matrix)
+    tubes.append(t)
 
-print(matrix)
+print("""Tubes to be sorted: 
+"""); print(tubes)
+
+game = TubeSorter(matrix= tubes)
+
+game.Sorter()
+
